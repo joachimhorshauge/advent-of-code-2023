@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// Read input file
-	data, err := os.ReadFile("input.txt")
+	data, err := os.ReadFile("cmd/day01/input.txt")
 	if err != nil {
 		log.Fatalf("failed to read input file: %s", err)
 	}
