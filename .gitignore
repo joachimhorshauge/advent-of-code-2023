@@ -12,3 +12,5 @@ out/
 # Go modules
 /vendor/
 
+# JetBrains files
+.idea/*
