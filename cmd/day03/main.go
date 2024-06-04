@@ -22,15 +22,13 @@ func main() {
 	fmt.Println("Part 2:", part2(input))
 }
 
-func findGears(matrix [][]rune) [][]int {
+func findGears(matrix [][]rune, pattern string) [][]int {
 	var gearLocations [][]int
-
-	re := regexp.MustCompile(`[^\.\d]`)
+	re := regexp.MustCompile(pattern)
 
 	for i, line := range matrix {
 		for j, c := range line {
-			char := string(c)
-			if re.MatchString(char) {
+			if re.MatchString(string(c)) {
 				gearLocations = append(gearLocations, []int{i, j})
 			}
 		}
@@ -55,12 +53,11 @@ func extractNumber(matrix [][]rune, x, y int) int {
 	return num
 }
 
-func findSurroundingNumbers(matrix [][]rune, gears [][]int) []int {
+func findSurroundingNumbers(matrix [][]rune, gears [][]int, part2 bool) []int {
 	var numbers []int
 	for _, gear := range gears {
 		seenNumbers := make(map[int]bool)
-		x := gear[0]
-		y := gear[1]
+		x, y := gear[0], gear[1]
 
 		surroundings := [][]int{
 			{x - 1, y - 1}, {x - 1, y}, {x - 1, y + 1},
@@ -69,8 +66,7 @@ func findSurroundingNumbers(matrix [][]rune, gears [][]int) []int {
 		}
 
 		for _, loc := range surroundings {
-			surX := loc[0]
-			surY := loc[1]
+			surX, surY := loc[0], loc[1]
 
 			if surX < 0 || surX >= len(matrix) || surY < 0 || surY >= len(matrix[surX]) {
 				continue
@@ -79,15 +75,26 @@ func findSurroundingNumbers(matrix [][]rune, gears [][]int) []int {
 			char := matrix[surX][surY]
 			if char >= '0' && char <= '9' {
 				num := extractNumber(matrix, surX, surY)
-
 				if !seenNumbers[num] {
-					numbers = append(numbers, num)
 					seenNumbers[num] = true
+					if !part2 {
+						numbers = append(numbers, num)
+					}
 				}
 			}
 		}
-	}
 
+		if part2 && len(seenNumbers) >= 2 {
+			keys := make([]int, 0, len(seenNumbers))
+			for k := range seenNumbers {
+				keys = append(keys, k)
+			}
+			if len(keys) >= 2 {
+				product := keys[0] * keys[1]
+				numbers = append(numbers, product)
+			}
+		}
+	}
 	return numbers
 }
 
@@ -99,8 +106,8 @@ func part1(input string) string {
 		matrix[i] = []rune(line)
 	}
 
-	gearLocations := findGears(matrix)
-	numbers := findSurroundingNumbers(matrix, gearLocations)
+	gearLocations := findGears(matrix, `[^\.\d]`)
+	numbers := findSurroundingNumbers(matrix, gearLocations, false)
 
 	sum := 0
 	for _, num := range numbers {
@@ -111,6 +118,20 @@ func part1(input string) string {
 }
 
 func part2(input string) string {
-	// Your Part 2 code here
-	return "Result of Part 2"
+	lines := strings.Split(input, "\n")
+
+	matrix := make([][]rune, len(lines))
+	for i, line := range lines {
+		matrix[i] = []rune(line)
+	}
+
+	gearLocations := findGears(matrix, `\*`)
+	numbers := findSurroundingNumbers(matrix, gearLocations, true)
+
+	sum := 0
+	for _, num := range numbers {
+		sum += num
+	}
+
+	return fmt.Sprintf("%d", sum)
 }
