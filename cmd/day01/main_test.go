@@ -14,8 +14,8 @@ func TestPart1(t *testing.T) {
 }
 
 func TestPart2(t *testing.T) {
-	input := "your test input here"
-	expected := "expected output"
+	input := "two1nine\neightwothree\nabcone2threexyz\nxtwone3four\n4nineeightseven2\nzoneight234\n7pqrstsixteen"
+	expected := "281"
 	result := part2(input)
 	if result != expected {
 		t.Errorf("expected %s, got %s", expected, result)
