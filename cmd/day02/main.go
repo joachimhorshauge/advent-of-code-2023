@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"regexp"
 	"strconv"
@@ -84,6 +85,26 @@ func part1(input string) string {
 }
 
 func part2(input string) string {
-	// Your Part 2 code here
-	return "Result of Part 2"
+	lines := strings.Split(input, "\n")
+	result := 0
+
+	for _, line := range lines {
+		parts := strings.Split(line, ": ")
+		if len(parts) < 2 {
+			continue
+		}
+
+		cubesParts := strings.Split(parts[1], "; ")
+
+		var red, green, blue = 0, 0, 0
+
+		for _, part := range cubesParts {
+			red = int(math.Max(float64(red), float64(cubesOfColor("red", part))))
+			green = int(math.Max(float64(green), float64(cubesOfColor("green", part))))
+			blue = int(math.Max(float64(blue), float64(cubesOfColor("blue", part))))
+		}
+		result += red * green * blue
+	}
+
+	return fmt.Sprintf("%d", result)
 }
